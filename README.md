@@ -56,22 +56,22 @@ docker-compose up
 
 1. **Initialize the system** (computes embeddings):
 ```bash
-python run_system.py --mode init
+python scripts/run.py --mode init
 ```
 
 2. **Run the API server**:
 ```bash
-python run_system.py --mode api
+python -m uvicorn main:app --host 0.0.0.0 --port 8000
 ```
 
 3. **Access the web interface**: Open http://localhost:8000
 
 ### Command Line Options
 
-The `run_system.py` script supports different modes:
+The `scripts/run.py` supports different modes:
 
 - `--mode init`: Initialize system and compute embeddings
-- `--mode api`: Start FastAPI server (default)
+- `--mode api`: Start FastAPI server
 - `--mode eval`: Run evaluation and generate report
 - `--mode search`: Interactive search mode
 - `--host HOST`: API server host (default: 0.0.0.0)
@@ -113,25 +113,19 @@ Response:
 
 #### Other Endpoints
 
-- **GET** `/`: Web interface
 - **GET** `/stats`: System statistics
 - **GET** `/health`: Health check
 
 ### Web Interface
 
-The web interface provides:
-- Search box for entering queries
-- Adjustable number of results (k parameter)
-- Real-time search results with similarity scores
-- Formatted display of questions, options, answers, and explanations
-- System statistics display
+No bundled web UI. Use the Postman collection `api_collection.postman.json` or curl.
 
 ## Evaluation
 
 ### Running Evaluation
 
 ```bash
-python run_system.py --mode eval
+python scripts/run.py --mode eval
 ```
 
 ### Evaluation Metrics
@@ -160,26 +154,22 @@ Example queries and retrieved results are generated during evaluation to demonst
 
 ### Core Components
 
-1. **BengaliRAGSystem** (`rag_system.py`): Core retrieval system
+1. **BengaliRAGSystem** (`app/core/rag_system.py`): Core retrieval system
    - Data loading and preprocessing
    - Text cleaning (removes HTML, normalizes Bengali text)
    - Embedding computation using SentenceTransformers
    - Vector similarity search using scikit-learn
 
-2. **FastAPI Server** (`api.py`): REST API and web interface
+2. **FastAPI Server** (`app/api/server.py`): REST API
    - Search endpoint with query parameters
-   - HTML interface with JavaScript
    - System statistics and health endpoints
 
-3. **Evaluation System** (`evaluation.py`): Performance evaluation
+3. **Evaluation System** (`app/evaluation/evaluator.py`): Performance evaluation
    - Leave-one-out evaluation approach
    - Hit@K and MRR metric computation
    - Qualitative example generation
 
-4. **Main Runner** (`run_system.py`): Command-line interface
-   - System initialization
-   - Different operation modes
-   - Interactive search mode
+4. **CLI** (`scripts/run.py`): Initialization, evaluation, interactive search
 
 ### Technical Details
 
@@ -193,18 +183,28 @@ Example queries and retrieved results are generated during evaluation to demonst
 
 ```
 Assignment_RagSystem/
-├── questions.csv              # Dataset file
-├── rag_system.py             # Core RAG system
-├── api.py                    # FastAPI application
-├── evaluation.py             # Evaluation system
-├── run_system.py             # Main runner script
-├── requirements.txt          # Python dependencies
-├── Dockerfile               # Docker configuration
-├── docker-compose.yml       # Docker Compose configuration
-├── embeddings.pkl           # Computed embeddings (generated)
-├── embeddings_index.pkl     # Nearest neighbors index (generated)
-├── evaluation_results.json  # Evaluation results (generated)
-└── README.md               # This file
+├── app/
+│   ├── __init__.py
+│   ├── api/
+│   │   ├── __init__.py
+│   │   └── server.py              # FastAPI application (uvicorn app.api.server:app)
+│   ├── core/
+│   │   ├── __init__.py
+│   │   └── rag_system.py          # Core RAG system
+│   └── evaluation/
+│       ├── __init__.py
+│       └── evaluator.py           # Evaluation system
+├── scripts/
+│   └── run.py                     # CLI entry (init, api, eval, search)
+├── main.py                        # ASGI entry (uvicorn main:app)
+├── questions.csv                  # Dataset file
+├── requirements.txt               # Python dependencies
+├── Dockerfile                     # Docker configuration
+├── docker-compose.yml             # Docker Compose configuration
+├── embeddings.pkl                 # Computed embeddings (generated)
+├── embeddings_index.pkl           # Nearest neighbors index (generated)
+├── evaluation_results.json        # Evaluation results (generated)
+└── README.md                      # This file
 ```
 
 ## Performance Notes

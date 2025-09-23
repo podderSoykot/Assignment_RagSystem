@@ -1,0 +1,93 @@
+{
+  "info": {
+    "name": "Bengali RAG System API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "bengali-rag-system-api-collection"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "health"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Stats",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/stats",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "stats"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Search",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/search?query={{query}}&k={{k}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "search"
+          ],
+          "query": [
+            { "key": "query", "value": "{{query}}" },
+            { "key": "k", "value": "{{k}}" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Chat",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"message\": \"বিহারী-বিনোদিনী রবীন্দ্রনাথের কোন উপন্যাসের চরিত্র?\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/chat",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "chat"
+          ]
+        }
+      }
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8000" },
+    { "key": "query", "value": "রবীন্দ্রনাথ ঠাকুর" },
+    { "key": "k", "value": "5" }
+  ]
+}
+
+
