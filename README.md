@@ -1,6 +1,17 @@
 # Bengali RAG System
 
+![Bengali RAG System Banner](page1.png)
+
 A Retrieval-Augmented Generation (RAG) system for Bengali literature questions using vector-based similarity search with SentenceTransformers.
+
+---
+
+## Badges
+
+![Python](https://img.shields.io/badge/python-3.8%2B-blue)
+![License: Educational](https://img.shields.io/badge/license-Educational%20%26%20Research-lightgrey)
+
+---
 
 ## Overview
 
@@ -16,6 +27,12 @@ This system implements a vector-based retrieval system that allows users to sear
 - **Docker Support**: Containerized deployment option
 - **Persistent Embeddings**: Saves computed embeddings for faster startup
 
+### Example Chat Interface
+
+![Chat Interface](chat.png)
+
+---
+
 ## Dataset
 
 The system works with a CSV dataset containing Bengali literature questions with the following structure:
@@ -27,28 +44,6 @@ The system works with a CSV dataset containing Bengali literature questions with
 - **Other metadata**: ID, timestamps, etc.
 
 Dataset size: ~500 questions (497 after cleaning)
-
-## Installation
-
-### Python Installation
-
-1. Clone or download the project files
-2. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-### Docker Installation
-
-1. Build the Docker image:
-```bash
-docker build -t bengali-rag .
-```
-
-2. Run with Docker Compose:
-```bash
-docker-compose up
-```
 
 ## Usage
 
@@ -65,6 +60,8 @@ python -m uvicorn main:app --host 0.0.0.0 --port 8000
 ```
 
 3. **Access the web interface**: Open http://localhost:8000
+
+---
 
 ### Command Line Options
 
@@ -111,10 +108,11 @@ Response:
 }
 ```
 
-#### Other Endpoints
+#### Health Check Example
 
-- **GET** `/stats`: System statistics
-- **GET** `/health`: Health check
+![API Health Check](health.png)
+
+---
 
 ### Web Interface
 
@@ -145,6 +143,12 @@ Based on evaluation of 100 test questions:
 - **Hit@3**: 9.0% (9/100)  
 - **Hit@5**: 9.0% (9/100)
 - **MRR**: 0.085
+
+### System Statistics Example
+
+![System Statistics](statistics.png)
+
+---
 
 ### Qualitative Examples
 
