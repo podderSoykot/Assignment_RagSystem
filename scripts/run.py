@@ -28,10 +28,10 @@ def run_evaluation():
     if rag is None:
         return
     evaluator = RAGEvaluator(rag)
-    evaluator.evaluate_retrieval_metrics()
+    results = evaluator.evaluate_retrieval_metrics()
     evaluator.print_evaluation_report()
     print("\n🔍 Generating qualitative examples...")
-    examples = evaluator.get_qualitative_examples(3)
+    examples = evaluator.get_qualitative_examples(5)
     for i, example in enumerate(examples, 1):
         print(f"\nExample {i}:")
         print(f"Query: {example['query']}")
@@ -41,6 +41,10 @@ def run_evaluation():
             print(f"  Rank {result['rank']}: {result['question']}")
             print(f"    Answer: {result['answer']}")
             print(f"    Similarity: {result['similarity_score']:.3f}")
+    # Save results to file
+    import json
+    with open('evaluation_results.json', 'w', encoding='utf-8') as f:
+        json.dump({'metrics': results, 'examples': examples}, f, ensure_ascii=False, indent=2)
 
 
 def run_api_server(host="0.0.0.0", port=8000):

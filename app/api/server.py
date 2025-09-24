@@ -14,7 +14,6 @@ app = FastAPI(
     default_response_class=JSONResponse
 )
 
-# Allow all origins for development; restrict in production as needed
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

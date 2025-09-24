@@ -6,6 +6,9 @@ from typing import List, Dict, Optional
 from sentence_transformers import SentenceTransformer
 from sklearn.neighbors import NearestNeighbors
 import re
+from sentence_transformers import CrossEncoder
+from rank_bm25 import BM25Okapi
+import openai
 
 
 class BengaliRAGSystem:
@@ -175,5 +178,43 @@ class BengaliRAGSystem:
             'has_embeddings': self.embeddings is not None,
             'has_index': self.nn_index is not None
         }
+
+    def bm25_search(self, query: str, k: int = 5) -> list:
+        if not hasattr(self, 'bm25'):
+            self.bm25 = BM25Okapi(self.questions_cleaned)
+        scores = self.bm25.get_scores(query)
+        top_indices = np.argsort(scores)[::-1][:k]
+        results = []
+        for i, idx in enumerate(top_indices):
+            row = self.data.iloc[idx]
+            results.append({
+                'rank': i + 1,
+                'id': int(row['ID']) if not pd.isna(row['ID']) else None,
+                'question': row['Question'],
+                'score': float(scores[idx]),
+                'explanation': row.get('Explain', None),
+            })
+        return results
+
+    def rerank_with_cross_encoder(self, query: str, candidates: list) -> list:
+        cross_encoder = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')
+        pairs = [(query, c['question']) for c in candidates]
+        scores = cross_encoder.predict(pairs)
+        reranked = [c for _, c in sorted(zip(scores, candidates), reverse=True)]
+        for i, c in enumerate(reranked):
+            c['rerank_score'] = float(scores[i])
+            c['rerank_rank'] = i + 1
+        return reranked
+
+    def generate_llm_answer(self, query: str, context: str, model: str = 'gpt-3.5-turbo') -> str:
+        prompt = f"Context:\n{context}\n\nQuestion: {query}\nAnswer in Bengali:"
+        response = openai.ChatCompletion.create(
+            model=model,
+            messages=[{"role": "system", "content": "You are a Podder Bengali literature Q&A."},
+                      {"role": "user", "content": prompt}],
+            max_tokens=256,
+            temperature=0.7
+        )
+        return response['choices'][0]['message']['content'].strip()
 
 
