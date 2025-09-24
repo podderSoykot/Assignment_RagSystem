@@ -6,24 +6,24 @@ from app.evaluation import RAGEvaluator
 
 
 def initialize_system():
-    print("🚀 Initializing Bengali RAG System...")
+    print(" Initializing Bengali RAG System...")
     if not os.path.exists('questions.csv'):
-        print("❌ Error: questions.csv not found!")
+        print(" Error: questions.csv not found!")
         return None
     rag = BengaliRAGSystem()
     rag.load_data('questions.csv')
     if os.path.exists('embeddings.pkl'):
-        print("📁 Loading existing embeddings...")
+        print(" Loading existing embeddings...")
         rag.load_embeddings('embeddings.pkl')
     else:
-        print("🧠 Computing new embeddings...")
+        print(" Computing new embeddings...")
         rag.compute_embeddings('embeddings.pkl')
-    print("✅ System initialized successfully!")
+    print(" System initialized successfully!")
     return rag
 
 
 def run_evaluation():
-    print("\n📊 Running evaluation...")
+    print("\n Running evaluation...")
     rag = initialize_system()
     if rag is None:
         return
@@ -48,13 +48,13 @@ def run_evaluation():
 
 
 def run_api_server(host="0.0.0.0", port=8000):
-    print(f"\n🌐 Starting API server on {host}:{port}...")
+    print(f"\n Starting API server on {host}:{port}...")
     try:
         uvicorn.run("app.api.server:app", host=host, port=port, reload=False)
     except KeyboardInterrupt:
-        print("\n👋 Server stopped by user")
+        print("\n Server stopped by user")
     except Exception as e:
-        print(f"❌ Error starting server: {e}")
+        print(f" Error starting server: {e}")
 
 
 def interactive_search():
@@ -65,14 +65,14 @@ def interactive_search():
     print("\nType your queries (or 'quit' to exit):")
     while True:
         try:
-            query = input("\n🔍 Query: ").strip()
+            query = input("\n Query: ").strip()
             if query.lower() in ['quit', 'exit', 'q']:
                 print("👋 Goodbye!")
                 break
             if not query:
                 continue
             results = rag.search(query, k=5)
-            print(f"\n📋 Results for: '{query}'")
+            print(f"\n Results for: '{query}'")
             print("=" * 50)
             for result in results:
                 print(f"\nRank {result['rank']}: {result['question']}")
@@ -85,7 +85,7 @@ def interactive_search():
             print("\n👋 Goodbye!")
             break
         except Exception as e:
-            print(f"❌ Error: {e}")
+            print(f" Error: {e}")
 
 
 def main():
@@ -97,7 +97,7 @@ def main():
     if args.mode == "init":
         rag = initialize_system()
         if rag:
-            print(f"✅ System ready! Stats: {rag.get_stats()}")
+            print(f"System ready! Stats: {rag.get_stats()}")
     elif args.mode == "eval":
         run_evaluation()
     elif args.mode == "search":
@@ -105,7 +105,7 @@ def main():
     elif args.mode == "api":
         run_api_server(args.host, args.port)
     else:
-        print("❌ Invalid mode specified")
+        print(" Invalid mode specified")
 
 
 if __name__ == "__main__":
